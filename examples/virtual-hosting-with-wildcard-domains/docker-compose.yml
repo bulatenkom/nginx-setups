@@ -1,0 +1,23 @@
+name: "reverse-proxy-example"
+
+services:
+  service1:
+    image: nginx:1.23-alpine
+    restart: always
+    volumes:
+      - ./service1:/usr/share/nginx/html:ro
+  service2:
+    image: nginx:1.23-alpine
+    restart: always
+    volumes:
+      - ./service2:/usr/share/nginx/html:ro
+  reverse-proxy:
+    image: nginx:1.23-alpine
+    ports:
+      - target: 80
+        published: 80
+        protocol: tcp
+        mode: host
+    restart: always
+    volumes:
+      - ./reverse-proxy.conf:/etc/nginx/conf.d/default.conf:ro
