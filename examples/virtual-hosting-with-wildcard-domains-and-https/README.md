@@ -34,3 +34,21 @@ Requesting reverse-proxy by only IP address without `Host` header will cause a m
 127.0.0.1 abc.service2.local
 ```
 
+## Prepare Self-signed certificate
+
+```shell
+# create private key
+wsl openssl genrsa -des3 -out server.key 1024
+
+# create certificate signing request (csr)
+wsl openssl req -new -key server.key -out server.csr
+
+# drop pass requirement
+wsl cp server.key server.key.org
+wsl openssl rsa -in server.key.org -out server.key
+
+# sign certificate (separately customize v3.ext file)
+wsl openssl x509 -req -days 365 -in server.csr -signkey server.key -out server.crt -extfile v3.ext
+
+# install certificate to Trusted Root Certification Authorities Store on local machine
+```
